@@ -15,6 +15,8 @@
         http://www.springframework.org/schema/task
         http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 
+	<!-- 주로 service, business 등 앱과 관련된 설정을 하는 곳 -->
+
 	<context:annotation-config />
 
 	<context:component-scan

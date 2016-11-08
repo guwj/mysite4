@@ -34,7 +34,7 @@ public class GuestbookController {
 	@RequestMapping("/add")
 	public String add(@ModelAttribute GuestbookVo vo) {
 		System.out.println("GuestbookController add 입장");
-		guestbookService.listAdd(vo);
+		guestbookService.listAdd(vo, false);
 
 		return "redirect:/guestbook";
 	}
@@ -53,5 +53,10 @@ public class GuestbookController {
 		guestbookService.delete(vo);
 		
 		return "redirect:/guestbook";
+	}
+	
+	@RequestMapping("/ajax")
+	public String ajax(){
+		return "/guestbook/index-ajax";
 	}
 }

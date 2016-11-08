@@ -17,22 +17,32 @@ import com.bit2016.mysite.vo.GuestbookVo;
 
 @Repository
 public class GuestbookDao {
-	
+
 	@Autowired
 	private SqlSession sqlSession;
 
-	public void delete(GuestbookVo vo) {
+	public int delete(GuestbookVo vo) {
 		System.out.println("GuestbookDao delete 입장");
-		sqlSession.delete("guestbook.delete", vo);
+		return sqlSession.delete("guestbook.delete", vo);
 	}
-	
-	public void insert(GuestbookVo vo ) {
+
+	public Long insert(GuestbookVo vo) {
 		System.out.println("GuestbookDao insert 입장");
 		sqlSession.insert("guestbook.insert", vo);
+		return vo.getNo();
 	}
-	
+
+	public GuestbookVo get(Long no) {
+		return sqlSession.selectOne("guestbook.getByNo", no);
+	}
+
 	public List<GuestbookVo> getList() {
 		System.out.println("GuestbookDao getList 입장");
 		return sqlSession.selectList("guestbook.getList");
+	}
+
+	public List<GuestbookVo> getList(int page) {
+		System.out.println("GuestbookDao getList 입장");
+		return sqlSession.selectList("guestbook.getList", page);
 	}
 }

@@ -36,4 +36,8 @@ public class UserService {
 		System.out.println("UserService updateUser 입장");
 		userDao.update(vo);
 	}
+	
+	public boolean emailExists(String email){
+		return ( userDao.get(email) != null );
+	}
 }

@@ -62,7 +62,7 @@
 
 							$
 									.ajax({
-										url : "${pageContext.request.contextPath }/api/user?a=chkemail&email="
+										url : "${pageContext.request.contextPath }/user/api/chekcemail?email="
 												+ email,
 										type : "get",
 										dataType : "json",

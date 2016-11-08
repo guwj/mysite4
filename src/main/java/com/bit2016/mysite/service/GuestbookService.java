@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 import com.bit2016.mysite.repository.GuestbookDao;
 import com.bit2016.mysite.vo.GuestbookVo;
@@ -14,22 +13,35 @@ public class GuestbookService {
 
 	@Autowired
 	private GuestbookDao guestbookDao;
-	
-	public List getGuestbookList(){
+
+	public List<GuestbookVo> getGuestbookList() {
 		System.out.println("GuestbookService list 입장");
-		List<GuestbookVo> list = guestbookDao.getList();
+
+		return guestbookDao.getList();
+	}
+
+	public List<GuestbookVo> getGuestbookList(int page) {
+		System.out.println("GuestbookService list(int page) 입장");
 		
-		return list;
+		return guestbookDao.getList(page);
 	}
-	
-	
-	public void listAdd(GuestbookVo vo){
+
+	public GuestbookVo listAdd(GuestbookVo vo, boolean fetch) {
 		System.out.println("GuestbookService listAdd 입장");
-		guestbookDao.insert(vo);
+		GuestbookVo guestbookVo = null;
+		
+		Long no = guestbookDao.insert(vo);
+		if(fetch){
+			guestbookVo = guestbookDao.get(no);
+		}
+		
+		return guestbookVo;
 	}
 	
-	public void delete(GuestbookVo vo){
+	public boolean delete(GuestbookVo vo) {
 		System.out.println("GuestbookService delete 입장");
-		guestbookDao.delete(vo);
+		int count = guestbookDao.delete(vo);
+		
+		return count == 1;
 	}
 }

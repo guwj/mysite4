@@ -30,9 +30,7 @@ public class UserDao {
 		map.put("email", email);
 		map.put("password", password);
 
-		UserVo vo = sqlSession.selectOne("user.getByEmailAndPassword", map);
-
-		return vo;
+		return sqlSession.selectOne("user.getByEmailAndPassword", map);
 	}
 
 	// email 체크할 때 사용
