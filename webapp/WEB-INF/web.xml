@@ -24,7 +24,7 @@
 	</context-param>
 
 
-	<!-- 한글 처리(post방식) -->
+	<!-- 한글 처리 필터(post방식) -->
 	<filter>
 		<filter-name>encodingFilter</filter-name>
 		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>

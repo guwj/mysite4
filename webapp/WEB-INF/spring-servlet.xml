@@ -2,16 +2,18 @@
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:aop="http://www.springframework.org/schema/aop" xmlns="http://www.springframework.org/schema/beans"
 	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
 	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
-	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd"
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"
 	xmlns:mvc="http://www.springframework.org/schema/mvc">
 
 	<!-- 이 곳은 web에 관한 설정을 하는 곳!! -->
 
 	<!-- validator, conversionService, messageConverter를 자동으로 등록 -->
 	<mvc:annotation-driven>
+
+		<!-- message converter -->
 		<mvc:message-converters>
 			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
 				<property name="supportedMediaTypes">
@@ -21,7 +23,8 @@
 				</property>
 			</bean>
 
-			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+			<bean
+				class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
 				<property name="supportedMediaTypes">
 					<list>
 						<value>application/json; charset=UTF-8</value>
@@ -29,6 +32,12 @@
 				</property>
 			</bean>
 		</mvc:message-converters>
+
+		<!-- argument resolver -->
+		<mvc:argument-resolvers>
+			<bean class="com.bit2016.security.AuthUserHandlerMethodArgumentResolver" />
+		</mvc:argument-resolvers>
+
 	</mvc:annotation-driven>
 
 
@@ -56,4 +65,39 @@
 		<property name="order" value="1" />
 	</bean>
 
+	<!-- 멀티파트 리졸버 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 최대업로드 가능한 바이트크기 -->
+		<property name="maxUploadSize" value="52428800" />
+		<!-- 디스크에 임시 파일을 생성하기 전에 메모리에 보관할수있는 최대 바이트 크기 -->
+		<!-- property name="maxInMemorySize" value="52428800" / -->
+		<!-- defaultEncoding -->
+		<property name="defaultEncoding" value="utf-8" />
+	</bean>
+
+	<!-- Interceptors -->
+	<mvc:interceptors>
+		<!-- <mvc:interceptor> <mvc:mapping path="/board/**" /> <bean class="com.bit2016.mysite.interceptor.MyInterceptor2" 
+			/> </mvc:interceptor> -->
+
+		<mvc:interceptor>
+			<mvc:mapping path="/user/login" />
+			<bean class="com.bit2016.security.AuthLoginInterceptor" />
+		</mvc:interceptor>
+
+		<mvc:interceptor>
+			<mvc:mapping path="/user/logout" />
+			<bean class="com.bit2016.security.AuthLogoutInterceptor" />
+		</mvc:interceptor>
+
+		<!-- 모든 요청을 받되 /user/login, /assets/** 는 체크를 안하겠다는 말 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<mvc:exclude-mapping path="/user/login" />
+			<mvc:exclude-mapping path="/user/logout" />
+			<mvc:exclude-mapping path="/assets/**" />
+			<bean class="com.bit2016.security.AuthInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
 </beans>

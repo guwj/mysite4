@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.bit2016.mysite.service.GuestbookService;
 import com.bit2016.mysite.vo.GuestbookVo;
+import com.bit2016.security.Auth;
 
 
 
@@ -21,7 +22,6 @@ public class GuestbookController {
 	@Autowired
 	private GuestbookService guestbookService;
 	
-
 	@RequestMapping("")
 	public String list(Model model) {
 		System.out.println("GuestbookController list 입장");

@@ -1,18 +1,15 @@
 package com.bit2016.mysite.controller;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import com.bit2016.mysite.exception.UserDaoException;
 import com.bit2016.mysite.service.UserService;
 import com.bit2016.mysite.vo.UserVo;
+import com.bit2016.security.Auth;
+import com.bit2016.security.AuthUser;
 
 @Controller
 @RequestMapping("/user")
@@ -47,58 +44,20 @@ public class UserController {
 		return "user/loginform";
 	}
 
-	@RequestMapping("/login")
-	public String login(@RequestParam(value = "email", required = true, defaultValue = "") String email,
-			@RequestParam(value = "password", required = true, defaultValue = "") String password,
-			HttpSession session) {
-
-		System.out.println("UserController login 입장");
-		UserVo userVo = userService.login(email, password);
-
-		// 인증 실패
-		if (userVo == null) {
-			return "redirect:/user/loginform?result=fail";
-		}
-		// 인증 성공
-		session.setAttribute("authUser", userVo);
-
-		return "redirect:/";
-	}
-
-	@RequestMapping("/logout")
-	public String logout(HttpSession session) {
-
-		System.out.println("UserController logout 입장");
-		session.removeAttribute("authUser");
-		session.invalidate();
-
-		return "redirect:/";
-	}
-
+	@Auth
 	@RequestMapping("/modifyform")
-	public String modifyForm(HttpSession session, Model model) {
+	public String modifyForm(@AuthUser UserVo authUser, Model model) {
 		System.out.println("UserController modifyform 입장");
-		UserVo authUser = (UserVo) session.getAttribute("authUser");
-
-		// 접근제한
-		if (authUser == null) {
-			return "redirect:/user/loginform?redirect-url=/user/modifyform";
-		}
 
 		UserVo vo = userService.getUser(authUser.getNo());
 		model.addAttribute("userVo", vo);
 		return "user/modifyform";
 	}
 
+	@Auth
 	@RequestMapping("/modify")
-	public String modify(HttpSession session, @ModelAttribute UserVo vo) {
+	public String modify(@AuthUser UserVo authUser, @ModelAttribute UserVo vo) {
 		System.out.println("UserController modify 입장");
-		UserVo authUser = (UserVo) session.getAttribute("authUser");
-
-		// 접근 제한
-		if (authUser == null) {
-			return "redirect:/user/loginform";
-		}
 
 		vo.setNo(authUser.getNo());
 		userService.updateUser(vo);
@@ -106,14 +65,13 @@ public class UserController {
 
 		return "redirect:/user/modifyform?update=success";
 	}
-	
-	
-//	// 비추하는 Exception 받는 방식
-//	@ExceptionHandler(UserDaoException.class)
-//	public String handlerUserDaoException(){
-//		// 1. logging ( 파일에 내용 저장 )
-//		//2. 사용자에게 사과하는 안내 페이지로 이동
-//		
-//		return "error/500";
-//	}
+
+	// // 비추하는 Exception 받는 방식
+	// @ExceptionHandler(UserDaoException.class)
+	// public String handlerUserDaoException(){
+	// // 1. logging ( 파일에 내용 저장 )
+	// //2. 사용자에게 사과하는 안내 페이지로 이동
+	//
+	// return "error/500";
+	// }
 }
